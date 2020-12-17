@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState ,useMemo }  from 'react';
 import { Box } from '@chakra-ui/react';
 
 import { Person } from '../../types';
@@ -15,17 +15,27 @@ export function PeopleList({
 }: Props) {
   const [searchValue, setSearchValue] = useState('');
 
-  const filteredPeople = searchValue
-    ? people.filter((person) => person.name.toLowerCase().includes(searchValue.toLowerCase()))
-    : people;
+  const filteredPeople = useMemo(() => 
+  {
+    return(
+      searchValue
+    ? people.filter((person) => {
+      return(person.name.toLowerCase().includes(searchValue.toLowerCase()) || person.teamName.toLowerCase().includes(searchValue.toLowerCase()) )
+    })
+    : people);
+  } , [searchValue , people]);
 
-  const sortedPeople = filteredPeople.sort((personA, personB) => {
-    if (personA.name === personB.name) {
-      return 0;
-    }
 
-    return personA.name > personB.name ? 1 : -1;
-  });
+  const sortedPeople = useMemo(() => 
+  {
+      filteredPeople.sort((personA, personB) => {
+      if (personA.name === personB.name) {
+        return 0;
+      }
+
+      return personA.name > personB.name ? 1 : -1;
+    });
+  } , [filteredPeople]);
 
 
   function handleSearch(value) {
@@ -39,7 +49,7 @@ export function PeopleList({
       />
 
       {sortedPeople.map(person => (
-        <PeopleListItem
+        <PeopleListItem key={person.id}
           {...person}
         />
       ))}

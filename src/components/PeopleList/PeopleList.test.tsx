@@ -64,6 +64,21 @@ describe('PeopleList', () => {
       expect(queryByText('Cello Inde')).not.toBeInTheDocument();
     });
 
-    it.todo('filters a list of people by teamName');
+    it('filters a list of people by teamName', () => {
+      const { queryByText, getByLabelText } = buildSubject(props);
+
+      fireEvent.change(getByLabelText('Search'), {
+        target: {
+          value: 'The Hustlers'
+        }
+      });
+
+      act(() => jest.runAllTimers());
+
+      expect(queryByText('Cello Inde')).toBeInTheDocument();
+      expect(queryByText('Ardelia Digan')).not.toBeInTheDocument();
+    });
+
+
   });
 });
